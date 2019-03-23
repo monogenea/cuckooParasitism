@@ -8,7 +8,7 @@ The `rethinking` package requires `rstan` which might require you somewhat speci
 
 The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. You can either
 
-**i*) use the following code in a fresh terminal,
+*i*) use the following code in a fresh terminal,
 ```{bash}
 conda create --name greta
 conda activate greta
@@ -19,7 +19,7 @@ conda env export --no-builds > greta.yml
 ```
 to create a Conda environment called `greta` (the last line is optional), or
 
-**ii*) borrow my `greta.yml` file to copy my `greta` Conda enviroment,
+*ii*) borrow my `greta.yml` file to copy my `greta` Conda enviroment,
 ```{bash}
 conda env create -f greta.yml
 ```
