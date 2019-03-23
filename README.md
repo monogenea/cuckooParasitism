@@ -8,7 +8,7 @@ The `rethinking` package requires `rstan` which might require you somewhat speci
 
 The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. You can either
 
-**i*) paste the following Bash code onto a fresh terminal,
+**i*) use the following code in a fresh terminal,
 ```{bash}
 conda create --name greta
 conda activate greta
@@ -32,8 +32,7 @@ conda env create -f greta.yml
 
 This work is partly based on:
 
-- Image processing - [*Image Classification in R: MXNet*](https://rpubs.com/kanedglsk/236125) from Shikun Li 
-- CNN architecture - Keras [CIFAR-10 CNN example](https://github.com/keras-team/keras/blob/master/examples/cifar10_cnn.py)
+- Original publication - [*Social parasitism as an alternative reproductive tactic in a cooperatively breeding cuckoo*](https://www.nature.com/articles/s41586-019-0981-1), from Riehl *et al*., 2019 
 
 Enjoy, all feedback is welcome!
 
