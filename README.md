@@ -1,9 +1,31 @@
-# Convolutional Neural Networks (CNN) tutorial
+# Bayesian modelling tutorial
 
 ## Instructions
 
-1. Bash the `kaggleAPI.sh` script. You will need to have a Kaggle account, installation and API credentials (learn more [here](https://github.com/Kaggle/kaggle-api)). You can either use a terminal from Linux/Mac OS or RStudio (learn more [here](https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal)).
-2. Install all packages listed on top of the script. `EBImage` is deposited in BioConductor, all other packages in CRAN.
+1. Install `rethinking`, `greta` and their dependencies TensorFlow and RStan
+
+The `rethinking` package requires `rstan` which might require you somewhat special compiling instructions (ADD RENVIRON LINE HERE!).
+
+The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. You can either
+
+**i*) paste the following Bash code onto a fresh terminal,
+```{bash}
+conda create --name greta
+conda activate greta
+conda install tensorflow==1.12.0
+conda install tensorflow-probability
+conda update --all
+conda env export --no-builds > greta.yml
+```
+to create a Conda environment called `greta` (the last line is optional), or
+
+**ii*) borrow my `greta.yml` file to copy my `greta` Conda enviroment,
+```{bash}
+conda env create -f greta.yml
+```
+
+2. Install all packages listed on top of the script. BioConductor??
+
 3. Run `script.R`. The TensorFlow instalation defaults to CPU; alternatively you can use NVIDIA GPUs (if you have them) which run substantially faster.
 
 ## Acknowledgements
