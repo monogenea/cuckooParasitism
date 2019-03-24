@@ -34,7 +34,7 @@ The dataset used in this work pertains to the publication:
 
 - [Riehl, C. & Strong, M. J. Social parasitism as an alternative reproductive tactic in a cooperatively breeding cuckoo. *Nature* **567**, 96-99 (2019)](https://www.nature.com/articles/s41586-019-0981-1)
 
-I want to thank the author Christina Riehl for all insighful discussions and suggestions. I also want to thank Nick Golding and the community at the [`greta`forum](https://forum.greta-stats.org) for their restless support over various inquiries.
+I want to thank the author Christina Riehl for all insighful discussions and suggestions. I also want to thank Nick Golding and the community at the [`greta`forum](https://forum.greta-stats.org) for their kind contributions.
 
 Enjoy, all feedback is welcome!
 

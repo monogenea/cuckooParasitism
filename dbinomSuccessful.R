@@ -1,11 +1,5 @@
-# Fri Nov 23 20:35:31 2018 ------------------------------
-# conda create --name greta
-# conda activate greta
-# conda install tensorflow==1.12.0
-# conda install tensorflow-probability
-# conda update --all
-# conda env export --no-builds > greta.yml
-
+# Sun Mar 24 08:24:59 2019 ------------------------------
+# Logistic regression model from greta w/ varying intercepts
 library(tensorflow)
 use_condaenv("greta")
 library(greta)
