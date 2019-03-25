@@ -4,9 +4,9 @@
 
 1. Install `rethinking`, `greta` and their dependencies TensorFlow and RStan
 
-The `rethinking` package requires `rstan` which might require you somewhat special compiling instructions. If you have trouble with the C++ compiler try creating (or editing) the file `~/.R/Makevars` containing the line `CXX14 = g++ -std=c++1y -Wno-unused-variable -Wno-unused-function -fPIC`.
+The `rethinking` package requires `rstan` which might require you somewhat special compiling configurations. If you have trouble with the C++ compiler try addinthe line `CXX14 = g++ -std=c++1y -Wno-unused-variable -Wno-unused-function -fPIC` to the file `~/.R/Makevars` (create if necessary).
 
-The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. I propose using CPU-only TensorFlow within Conda environments, but feel free to use alternatives at your own discretion. You can either:
+The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. To install those you can either:
 
 * *i*) use the following code in a fresh terminal,
 ```{bash}
@@ -22,7 +22,7 @@ to create a Conda environment called `greta`, or
 ```{bash}
 conda env create -f greta.yml
 ```
-Quick side note: to produce this file you can use the command `conda env export --no-builds > greta.yml`.
+I propose using CPU-only TensorFlow within Conda environments, but feel free to use alternatives at your own discretion. Quick side note: to create a `.yml` file you can use the command `conda env export --no-builds > greta.yml`.
 
 2. Install all packages listed on top of the two R scripts `zipoisEggsFledged.R` and `dbinomSuccessful.R`. All of them are available on CRAN.
 

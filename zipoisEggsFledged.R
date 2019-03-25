@@ -18,7 +18,7 @@ fro <- read_xlsx("data.xlsx", sheet = allTabs[2])
 # Assess missingness
 sum(complete.cases(fro)) / nrow(fro)
 # only 0.57 complete records; which vars have at least one NA?
-names(which(apply(femRoutput, 2, function(x){any(is.na(x))})))
+names(which(apply(fro, 2, function(x){any(is.na(x))})))
 
 # femRoutput <- femRoutput[complete.cases(femRoutput),]
 
