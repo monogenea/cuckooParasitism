@@ -4,7 +4,7 @@
 
 1. Install `rethinking`, `greta` and their dependencies TensorFlow and RStan
 
-The `rethinking` package requires `rstan` which might require you somewhat special compiling instructions (ADD RENVIRON LINE HERE!).
+The `rethinking` package requires `rstan` which might require you somewhat special compiling instructions. If you have trouble try creating or editing the file `~/.R/Makevars` containing the line `CXX14 = g++ -std=c++1y -Wno-unused-variable -Wno-unused-function -fPIC`.
 
 The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. I propose using CPU-only TensorFlow within Conda environments, but feel free to use alternatives at your own discretion. You can either:
 
