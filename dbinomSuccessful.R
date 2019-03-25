@@ -62,7 +62,7 @@ mcmc_trace(draws)
 mcmc_intervals(draws)
 # Large eggs, young bird, small group, no fledged birds
 scenario1 <- ilogit(a + mean(femRoutput$Min_age) * bA + mean(femRoutput$Eggs_fledged) * bEL +
-                          mean(femRoutput$Mean_eggsize) * bES + mean(femRoutput$Group_size) * bGS)
+                          mean(femRoutput$Mean_eggsize) * bES + max(femRoutput$Group_size) * bGS)
 probs1 <- calculate(scenario1, draws)
 
 # Small eggs, old bird, large group, many fledged birds
