@@ -1,4 +1,4 @@
-# Sun Mar 24 08:24:59 2019 ------------------------------
+# Sat Mar 30 09:53:20 2019 ------------------------------
 # Logistic regression model from greta w/ varying intercepts
 library(tensorflow)
 use_condaenv("greta")
@@ -6,6 +6,7 @@ library(greta)
 library(tidyverse)
 library(bayesplot)
 library(readxl)
+source("dordlogitFun.R")
 
 # Download data set from Riehl et al. 2019
 dataURL <- "https://datadryad.org/bitstream/handle/10255/dryad.204922/Riehl%20and%20Strong_Social%20Parasitism%20Data_2007-2017_DRYAD.xlsx"
@@ -32,49 +33,38 @@ Eggs_laid <- as_data(fro$Eggs_laid)
 Mean_eggsize <- as_data(fro$Mean_eggsize)
 Group_size <- as_data(fro$Group_size)
 Parasite <- as_data(fro$Parasite)
-TermStage <- as_data(fro$TermStage)
 
 # Define model effects
 sigmaML <- cauchy(0, 1, truncation = c(0, Inf), dim = 3)
+a_group <- normal(0, sigmaML[3], dim = max(group_id))
 a_fem <- normal(0, sigmaML[1], dim = max(female_id))
 a_year <- normal(0, sigmaML[2], dim = max(year))
-a_group <- normal(0, sigmaML[3], dim = max(group_id))
 
-a <- normal(0, 5)
 bA <- normal(0, 3)
 bEL <- normal(0, 3)
 bES <- normal(0, 3)
 bGS <- normal(0, 3)
 bP <- normal(0, 3)
-bTS <- normal(0, 3)
 
-# Model setup
-mu <- a + a_fem[female_id] + a_year[year] + a_group[group_id] +
+# make one-hot-encoded response vector
+resp <- matrix(0, nrow(fro), 4)
+resp[cbind(1:nrow(fro), fro$TermStage)] <- 1
+
+# unordered vector of cutpoints (bit flaky and needs increasing starting values
+# to be provided)
+# cutpoints <- normal(0, 10, dim = k - 1)
+
+# make an ordered vector of cutpoints (the priors become a bit tricky here though)
+cutpoints_raw <- c(normal(0, 10),
+                   normal(0, 1, truncation = c(0, Inf), dim = 4 - 2))
+cutpoints <- cumsum(cutpoints_raw)
+phi <- a_fem[female_id] + a_year[year] + a_group[group_id] +
       Age * bA + Eggs_laid * bEL + Mean_eggsize * bES +
-      Group_size * bGS + Parasite * bP + TermStage * bTS
+      Group_size * bGS + Parasite * bP
 
-p <- ilogit(mu)
-distribution(fro$Successful) <- bernoulli(p)
-cuckooModel <- model(a, bA, bEL, bES, bGS, bP, bTS)
+distribution(resp) <- ordered_logit(phi, cutpoints,
+                                    n_realisations = nrow(fro))
 
-# Plot
-plot(cuckooModel)
-
-# HMC sampling
-draws <- mcmc(cuckooModel, n_samples = 4000,
-              warmup = 1000, chains = 4, n_cores = 10)
-# Trace plots
-mcmc_trace(draws)
+m <- model(bA, bEL, bES, bGS, bP)
+draws <- mcmc(m, warmup = 1e3, n_samples = 5e3)
 mcmc_intervals(draws)
-# Large eggs, young bird, small group, no fledged birds
-scenario1 <- ilogit(a + mean(fro$Min_age) * bA + mean(fro$Eggs_fledged) * bEL +
-                          mean(fro$Mean_eggsize) * bES + max(fro$Group_size) * bGS)
-probs1 <- calculate(scenario1, draws)
-
-# Small eggs, old bird, large group, many fledged birds
-# scenario2 <- ilogit(a + 12 * bA + 4 * bEF + 26 * bES + 7 * bGS)
-# probs2 <- calculate(scenario2, draws)
-# boxplot(unlist(probs1), unlist(probs2),
-#         names = c("Scenario1", "Scenario2"),
-#         ylab = "P(Parasitism)")
-

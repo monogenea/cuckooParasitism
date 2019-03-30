@@ -1,5 +1,5 @@
 # Tue Mar 12 20:50:17 2019 ------------------------------
-# ZIPoisson model from rethinking; cross-classified varying intercepts
+# ZIPoisson model from rethinking; cross-classified multilevel models
 library(rethinking)
 library(tidyverse)
 library(magrittr)
