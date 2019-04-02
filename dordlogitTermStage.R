@@ -50,21 +50,56 @@ bP <- normal(0, 3)
 resp <- matrix(0, nrow(fro), 4)
 resp[cbind(1:nrow(fro), fro$TermStage)] <- 1
 
-# unordered vector of cutpoints (bit flaky and needs increasing starting values
-# to be provided)
-# cutpoints <- normal(0, 10, dim = k - 1)
-
-# make an ordered vector of cutpoints (the priors become a bit tricky here though)
-cutpoints_raw <- c(normal(0, 10),
-                   normal(0, 1, truncation = c(0, Inf), dim = 4 - 2))
-cutpoints <- cumsum(cutpoints_raw)
-phi <- a_fem[female_id] + a_year[year] + a_group[group_id] +
+cutpoints <- normal(0, 3, dim = 3)
+# cutpoints <- cumsum(cutpoints_raw)
+phi <- a_fem[female_id] + a_year[year] + # a_group[group_id] +
       Age * bA + Eggs_laid * bEL + Mean_eggsize * bES +
       Group_size * bGS + Parasite * bP
 
 distribution(resp) <- ordered_logit(phi, cutpoints,
                                     n_realisations = nrow(fro))
+m <- model(cutpoints, bA, bEL, bES, bGS, bP)
+draws <- mcmc(m, warmup = 1e3, n_samples = 2e3)
 
-m <- model(bA, bEL, bES, bGS, bP)
-draws <- mcmc(m, warmup = 1e3, n_samples = 5e3)
-mcmc_intervals(draws)
+mcmc_trace(draws)
+mcmc_areas(draws)
+
+# Predictions
+allDraws <- as.data.frame(do.call("rbind", draws))
+
+# Assuming parasitism
+valsWithP <- select(fro, Min_age, Eggs_laid, Mean_eggsize, Group_size) %>% 
+      mutate(Parasite = 1) %>% colMeans()
+# Less eggs laid?
+valsWithP["Eggs_laid"] <- 1
+
+withParasite <- sapply(1:3, function(x){
+      rethinking::logistic(allDraws[,x] + 
+            as.matrix(select(allDraws, -starts_with("cutpoints"))) %*% valsWithP)
+})
+
+# Assuming no parasitism
+valsWithoutP <- select(fro, Min_age, Eggs_laid, Mean_eggsize, Group_size) %>% 
+      mutate(Parasite = 0) %>% colMeans()
+# Less eggs laid?
+valsWithoutP["Eggs_laid"] <- 1
+
+withoutParasite <- sapply(1:3, function(x){
+      rethinking::logistic(allDraws[,x] + 
+      as.matrix(select(allDraws, -starts_with("cutpoints"))) %*% valsWithoutP)
+})
+
+boxplot(withoutParasite)
+
+n <- nrow(allDraws)
+plot(1, 1, type = "n", ylab = "Prob", xlab = "Parasite",
+     ylim = c(0, 1), xlim = c(0, 1), xaxp = c(0, 1, 1), yaxp = c(0, 1, 2))
+
+for(k in 1:3){
+      cols <- c("red", "green", "blue"[k])
+      segments(x0 = 0, y0 = withoutParasite[, k],
+               x1 = 1, y1 = withParasite[, k], col = cols)
+}
+
+
+
