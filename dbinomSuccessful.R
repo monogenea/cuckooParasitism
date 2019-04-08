@@ -27,12 +27,12 @@ year <- as.integer(factor(fro$Year))
 group_id <- as.integer(factor(fro$Group_ID_coded))
 
 # Define model vars
-Age <- as_data(fro$Min_age)
-Eggs_laid <- as_data(fro$Eggs_laid)
-Mean_eggsize <- as_data(fro$Mean_eggsize)
-Group_size <- as_data(fro$Group_size)
+Age <- as_data(scale(fro$Min_age))
+Eggs_laid <- as_data(scale(fro$Eggs_laid))
+Mean_eggsize <- as_data(scale(fro$Mean_eggsize))
+Group_size <- as_data(scale(fro$Group_size))
 Parasite <- as_data(fro$Parasite)
-TermStage <- as_data(fro$TermStage)
+# TermStage <- as_data(fro$TermStage)
 
 # Define model effects
 sigmaML <- cauchy(0, 1, truncation = c(0, Inf), dim = 3)
@@ -46,16 +46,16 @@ bEL <- normal(0, 3)
 bES <- normal(0, 3)
 bGS <- normal(0, 3)
 bP <- normal(0, 3)
-bTS <- normal(0, 3)
+bPA <- normal(0, 3)
 
 # Model setup
 mu <- a + a_fem[female_id] + a_year[year] + a_group[group_id] +
-      Age * bA + Eggs_laid * bEL + Mean_eggsize * bES +
-      Group_size * bGS + Parasite * bP + TermStage * bTS
+      Age*bA + Eggs_laid*bEL + Mean_eggsize*bES +
+      Group_size*bGS + Parasite*Age*bPA
 
 p <- ilogit(mu)
 distribution(fro$Successful) <- bernoulli(p)
-cuckooModel <- model(a, bA, bEL, bES, bGS, bP, bTS)
+cuckooModel <- model(a, bA, bEL, bES, bGS, bPA)
 
 # Plot
 plot(cuckooModel)
@@ -65,16 +65,24 @@ draws <- mcmc(cuckooModel, n_samples = 4000,
               warmup = 1000, chains = 4, n_cores = 10)
 # Trace plots
 mcmc_trace(draws)
-mcmc_intervals(draws)
-# Large eggs, young bird, small group, no fledged birds
-scenario1 <- ilogit(a + mean(fro$Min_age) * bA + mean(fro$Eggs_fledged) * bEL +
-                          mean(fro$Mean_eggsize) * bES + max(fro$Group_size) * bGS)
-probs1 <- calculate(scenario1, draws)
+mcmc_intervals(draws, prob = .95)
+# Simulation with average eggs laid, egg size and group size, w/ and w/o parasitism
+seqX <- seq(-3, 3, length.out = 100)
+probsNoPar <- sapply(seqX, function(x){
+      scenario <- ilogit(a + x*bA + 0*bEL + 0*bES + 0*bGS + 0*bPA)
+      probs <- calculate(scenario, draws)
+      return(unlist(probs))
+})
+probsPar <- sapply(seqX, function(x){
+      scenario <- ilogit(a + x*bA + 0*bEL + 0*bES + 0*bGS + x*bPA)
+      probs <- calculate(scenario, draws)
+      return(unlist(probs))
+})
 
-# Small eggs, old bird, large group, many fledged birds
-# scenario2 <- ilogit(a + 12 * bA + 4 * bEF + 26 * bES + 7 * bGS)
-# probs2 <- calculate(scenario2, draws)
-# boxplot(unlist(probs1), unlist(probs2),
-#         names = c("Scenario1", "Scenario2"),
-#         ylab = "P(Parasitism)")
-
+plot(seqX, apply(probsNoPar, 2, mean), type = "l", ylim = 0:1,
+     xlab = "Min age (standardized)", ylab = "P(Successful)")
+rethinking::shade(apply(probsNoPar, 2, rethinking::HPDI, prob = .95),
+                  seqX)
+lines(seqX, apply(probsPar, 2, mean), lty = 2, col = "red")
+rethinking::shade(apply(probsPar, 2, rethinking::HPDI, prob = .95),
+                  seqX, col = rgb(1,0,0,.25))

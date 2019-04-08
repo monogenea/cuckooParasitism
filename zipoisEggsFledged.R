@@ -6,8 +6,8 @@ library(magrittr)
 library(readxl)
 
 # Download data set from Riehl et al. 2019
-# dataURL <- "https://datadryad.org/bitstream/handle/10255/dryad.204922/Riehl%20and%20Strong_Social%20Parasitism%20Data_2007-2017_DRYAD.xlsx"
-# download.file(dataURL, destfile = "data.xlsx")
+dataURL <- "https://datadryad.org/bitstream/handle/10255/dryad.204922/Riehl%20and%20Strong_Social%20Parasitism%20Data_2007-2017_DRYAD.xlsx"
+download.file(dataURL, destfile = "data.xlsx")
 
 (allTabs <- excel_sheets("data.xlsx")) # list tabs
 
@@ -84,7 +84,7 @@ post <- extract.samples(eggsFMod)
 # PI of P(no clutch at all)
 dens(logistic(post$ap), show.HPDI = T, xlab = "ZIP Bernoulli(p)")
 
-# Run simulations (predictive posterior?)
+# Run simulations
 lambdaNoP <- exp(post$a + 0*post$bP + 6*post$bA +
                        4*post$bGS + 30*post$bES + 0*6*post$bPA)
 simFledgeNoPar <- rpois(n = length(lambdaNoP), lambda = lambdaNoP)
@@ -123,7 +123,7 @@ post <- extract.samples(eggsLMod)
 # PI of P(no clutch at all)
 dens(logistic(post$ap), show.HPDI = T, xlab = "ZIP Bernoulli(p)")
 
-# Run simulations (predictive posterior?)
+# Run simulations
 lambdaNoP <- exp(post$a + 0*post$bP + 6*post$bA +
                        4*post$bGS + 30*post$bES + 0*6*post$bPA)
 simFledgeNoPar <- rpois(n = length(lambdaNoP), lambda = lambdaNoP)
