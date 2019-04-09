@@ -18,13 +18,13 @@ conda update --all
 ```
 to create a Conda environment called `greta`, or
 
-* *ii*) borrow my `greta.yml` file to copy my `greta` Conda enviroment,
+* *ii*) use the `greta.yml` file to copy my `greta` Conda enviroment,
 ```{bash}
 conda env create -f greta.yml
 ```
 I propose using CPU-only TensorFlow within Conda environments, but feel free to use alternatives at your own discretion. Quick side note: to create a `.yml` file you can use the command `conda env export --no-builds > greta.yml`.
 
-2. Install all packages listed on top of the two R scripts `zipoisEggsFledged.R` and `dbinomSuccessful.R`. All of them are available on CRAN.
+2. Install all packages listed on top of the two R scripts `zipoisEggs.R` and `dbinomSuccessful.R`. All of them are available on CRAN.
 
 3. Run either or both scripts - the first implements a `rethinking`-based zero-inflated Poisson regression on the number of fledglings, whereas the second implements a `greta`-based logistic regression on whether a female has successfully produced fledglings or not.
 
