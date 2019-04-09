@@ -19,14 +19,14 @@ fro <- read_xlsx("data.xlsx", sheet = allTabs[2])
 fro <- fro[complete.cases(fro),]
 
 # Create the termination stage var the authors used
-fro$TermStage <- colSums(t(select(fro,starts_with("Eggs")) != 0))
+# fro$TermStage <- colSums(t(select(fro,starts_with("Eggs")) != 0))
 
 # Use cross-classified varying intercepts for year, female ID and group ID
 female_id <- as.integer(factor(fro$Female_ID_coded))
 year <- as.integer(factor(fro$Year))
 group_id <- as.integer(factor(fro$Group_ID_coded))
 
-# Define model vars
+# Define and standardize model vars
 Age <- as_data(scale(fro$Min_age))
 Eggs_laid <- as_data(scale(fro$Eggs_laid))
 Mean_eggsize <- as_data(scale(fro$Mean_eggsize))
@@ -50,12 +50,12 @@ bPA <- normal(0, 3)
 
 # Model setup
 mu <- a + a_fem[female_id] + a_year[year] + a_group[group_id] +
-      Age*bA + Eggs_laid*bEL + Mean_eggsize*bES +
+      Age*bA + Eggs_laid*bEL + Mean_eggsize*bES + Parasite*bP +
       Group_size*bGS + Parasite*Age*bPA
 
 p <- ilogit(mu)
 distribution(fro$Successful) <- bernoulli(p)
-cuckooModel <- model(a, bA, bEL, bES, bGS, bPA)
+cuckooModel <- model(a, bA, bEL, bES, bP, bGS, bPA)
 
 # Plot
 plot(cuckooModel)
@@ -65,22 +65,25 @@ draws <- mcmc(cuckooModel, n_samples = 4000,
               warmup = 1000, chains = 4, n_cores = 10)
 # Trace plots
 mcmc_trace(draws)
+# Parameter posterior
 mcmc_intervals(draws, prob = .95)
+
 # Simulation with average eggs laid, egg size and group size, w/ and w/o parasitism
 seqX <- seq(-3, 3, length.out = 100)
 probsNoPar <- sapply(seqX, function(x){
-      scenario <- ilogit(a + x*bA + 0*bEL + 0*bES + 0*bGS + 0*bPA)
+      scenario <- ilogit(a + x*bA)
       probs <- calculate(scenario, draws)
       return(unlist(probs))
 })
 probsPar <- sapply(seqX, function(x){
-      scenario <- ilogit(a + x*bA + 0*bEL + 0*bES + 0*bGS + x*bPA)
+      scenario <- ilogit(a + x*bA + bP + x*bPA)
       probs <- calculate(scenario, draws)
       return(unlist(probs))
 })
 
 plot(seqX, apply(probsNoPar, 2, mean), type = "l", ylim = 0:1,
-     xlab = "Min age (standardized)", ylab = "P(Successful)")
+     xlab = "Min age (standardized)", ylab = "P(Successful)",
+     yaxp = c(0, 1, 2))
 rethinking::shade(apply(probsNoPar, 2, rethinking::HPDI, prob = .95),
                   seqX)
 lines(seqX, apply(probsPar, 2, mean), lty = 2, col = "red")
