@@ -89,3 +89,6 @@ rethinking::shade(apply(probsNoPar, 2, rethinking::HPDI, prob = .95),
 lines(seqX, apply(probsPar, 2, mean), lty = 2, col = "red")
 rethinking::shade(apply(probsPar, 2, rethinking::HPDI, prob = .95),
                   seqX, col = rgb(1,0,0,.25))
+
+# Write sessioninfo
+writeLines(capture.output(sessionInfo()), "sessionInfo")
