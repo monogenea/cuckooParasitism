@@ -15,11 +15,7 @@ download.file(dataURL, destfile = "data.xlsx")
 
 # Read female reproductive output and discard records w/ NAs
 fro <- read_xlsx("data.xlsx", sheet = allTabs[2])
-# pairwDist <- read_xlsx("data.xlsx", sheet = allTabs[3])
 fro <- fro[complete.cases(fro),]
-
-# Create the termination stage var the authors used
-# fro$TermStage <- colSums(t(select(fro,starts_with("Eggs")) != 0))
 
 # Use cross-classified varying intercepts for year, female ID and group ID
 female_id <- as.integer(factor(fro$Female_ID_coded))
@@ -32,7 +28,6 @@ Eggs_laid <- as_data(scale(fro$Eggs_laid))
 Mean_eggsize <- as_data(scale(fro$Mean_eggsize))
 Group_size <- as_data(scale(fro$Group_size))
 Parasite <- as_data(fro$Parasite)
-# TermStage <- as_data(fro$TermStage)
 
 # Define model effects
 sigmaML <- cauchy(0, 1, truncation = c(0, Inf), dim = 3)

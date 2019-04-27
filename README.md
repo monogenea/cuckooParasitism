@@ -26,7 +26,7 @@ I propose using CPU-only TensorFlow within Conda environments, but feel free to 
 
 2. Install all packages listed on top of the two R scripts `zipoisEggs.R` and `dbinomSuccessful.R`. All of them are available on CRAN.
 
-3. Run either or both scripts - the first implements a `rethinking`-based zero-inflated Poisson regression on the number of fledglings, whereas the second implements a `greta`-based logistic regression on whether a female has successfully produced fledglings or not.
+3. Run either or both scripts - the first implements a `rethinking`-based zero-inflated Poisson regression on the number of fledglings, and a Poisson regression on the number of laid eggs, whereas the second implements a `greta`-based logistic regression on whether a female has successfully produced fledglings or not.
 
 ## Acknowledgements
 
