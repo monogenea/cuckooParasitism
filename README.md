@@ -4,7 +4,7 @@
 
 1. Install `rethinking`, `greta` and their dependencies TensorFlow and RStan
 
-The `rethinking` package requires `rstan` which might require you somewhat special compiling configurations. If you have trouble with the C++ compiler try addinthe line `CXX14 = g++ -std=c++1y -Wno-unused-variable -Wno-unused-function -fPIC` to the file `~/.R/Makevars` (create if necessary).
+The `rethinking` package requires `rstan` which might require you somewhat special compiling configurations. If you have trouble with the C++ compiler try adding the line `CXX14 = g++ -std=c++1y -Wno-unused-variable -Wno-unused-function -fPIC` to the file `~/.R/Makevars` (create if necessary).
 
 The `greta` in turn, requires the Python modules `tensorflow` and `tensorflow_probability`. To install those you can either:
 
