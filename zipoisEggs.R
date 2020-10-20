@@ -6,7 +6,7 @@ library(magrittr)
 library(readxl)
 
 # Download data set from Riehl et al. 2019
-dataURL <- "https://datadryad.org/bitstream/handle/10255/dryad.204922/Riehl%20and%20Strong_Social%20Parasitism%20Data_2007-2017_DRYAD.xlsx"
+dataURL <- "https://datadryad.org/stash/downloads/file_stream/82205"
 download.file(dataURL, destfile = "data.xlsx")
 
 (allTabs <- excel_sheets("data.xlsx")) # list tabs
